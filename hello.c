@@ -16,35 +16,35 @@ int main(int argc, char *argv[]) {
 	int sockfd;
 	int port = (argc == 2) ? atoi(argv[1]) : 80;
 
-	// socketì¬
+	// socketä½œæˆ
 	if ((sockfd = socket(PF_INET, SOCK_STREAM, 0)) < 0) {
 		perror("socket");
 		exit(EXIT_FAILURE);
 	}
 	
-	// Port, IPƒAƒhƒŒƒX‚ğİ’è(IPv4)
+	// Port, IPã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’è¨­å®š(IPv4)
 	memset(&server, 0, sizeof(server));
 	server.sin_family = AF_INET;	
 	server.sin_addr.s_addr = INADDR_ANY;
 	server.sin_port = htons(port);
 	
-	// socket‚ğ‚·‚®Ä—˜—p‚Å‚«‚é‚æ‚¤‚É
+	// socketã‚’ã™ãå†åˆ©ç”¨ã§ãã‚‹ã‚ˆã†ã«
 	char opt = 1;
 	setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, (char *)&opt, sizeof(opt));
 
-	// ƒfƒBƒXƒNƒŠƒvƒ^‚ÆPort‚ğŒ‹‚Ñ•t‚¯‚é
+	// ãƒ‡ã‚£ã‚¹ã‚¯ãƒªãƒ—ã‚¿ã¨Portã‚’çµã³ä»˜ã‘ã‚‹
 	if (bind(sockfd, (struct sockaddr *) &server, sizeof(server)) < 0) {
 		perror("bind");
 		exit(EXIT_FAILURE);
 	}
 	
-	// listen€”õ
+	// listenæº–å‚™
 	if (listen(sockfd, SOMAXCONN) < 0) {
 		perror("listen");
 		exit(EXIT_FAILURE);
 	}
 
-	// ƒƒCƒ“ƒ‹[ƒv
+	// ãƒ¡ã‚¤ãƒ³ãƒ«ãƒ¼ãƒ—
 	while (1) {
 		struct sockaddr_in client;
 		int newfd;
@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) {
 		int filefd;
 		char file[BUF_SIZE] = "";
 
-		// client‚©‚ç‚ÌÚ‘±‚ğó‚¯•t‚¯‚é
+		// clientã‹ã‚‰ã®æ¥ç¶šã‚’å—ã‘ä»˜ã‘ã‚‹
 		memset(&client, 0, sizeof(client));
 		len = sizeof(client);
 		if ((newfd = accept(sockfd, (struct sockaddr *) &client, &len)) < 0) {
@@ -66,15 +66,15 @@ int main(int argc, char *argv[]) {
 			exit(EXIT_FAILURE);
 		}
 
-		// request line“Ç‚İ‚İ
+		// request lineèª­ã¿è¾¼ã¿
 		if (recv(newfd, buf, sizeof(buf), 0) < 0) {
 			perror("recv");
 			exit(EXIT_FAILURE);
 		}
 		sscanf(buf, "%s %s %s", method, url, protocol);
 
-		// request header‚ÌI‚í‚è‚Ü‚Å“Ç‚İ”ò‚Î‚µ
-		// body‚Í–³‹		
+		// request headerã®çµ‚ã‚ã‚Šã¾ã§èª­ã¿é£›ã°ã—
+		// bodyã¯ç„¡è¦–		
 		do {
 			if (strstr(buf, "\r\n\r\n")) {
 				break;
@@ -84,11 +84,11 @@ int main(int argc, char *argv[]) {
 			}
 		} while (recv(newfd, buf+strlen(buf), sizeof(buf) - strlen(buf), 0) > 0);
 
-		// ƒtƒ@ƒCƒ‹ƒpƒX¶¬iÆã«—L‚èj	
+		// ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹ç”Ÿæˆï¼ˆè„†å¼±æ€§æœ‰ã‚Šï¼‰	
 		sprintf(file, DOCUMENT_ROOT);
 		strcat(file, url);		
 
-		// index.html•âŠ®
+		// index.htmlè£œå®Œ
 		if( file[strlen(file)-1] == '/' ) {
 			strcat(file, "index.html" );
 		}
@@ -98,13 +98,13 @@ int main(int argc, char *argv[]) {
 			sleep(1);
 		#endif
 
-		// iÅ’áŒÀ‚Ìjheader‘—M
+		// ï¼ˆæœ€ä½é™ã®ï¼‰headeré€ä¿¡
 		char *header = "HTTP/1.0 200 OK\n"
 								"Content-type: text/html\n"
 								"\n";
 		send(newfd, header, strlen(header), 0);
 
-		//	body‘—M
+		//	bodyé€ä¿¡
 		if ((filefd = open(file, O_RDONLY)) < 0) {
 			perror("open");
 			fprintf(stderr, "file: %s\n", file);
