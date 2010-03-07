@@ -1,0 +1,22 @@
+make
+./hello 8080 &
+
+telnet 127.0.0.1 8080
+Trying 127.0.0.1...
+Connected to localhost.
+Escape character is '^]'.
+GET / HTTP/1.0
+
+HTTP/1.0 200 OK
+Content-type: text/html
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>test</title>
+</head>
+<body>
+	<h1>Hello, httpd!</h1>
+	<p>This is index.html.</p>
+</body>
+</html>Connection closed by foreign host.
